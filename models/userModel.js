@@ -28,6 +28,13 @@ const UserSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        isActivated: {
+            type: Boolean,
+            default: false,
+        },
+        activationLink: {
+            type: String,
+        },
     },
     {
         timestamps: true,

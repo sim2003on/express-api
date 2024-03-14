@@ -12,4 +12,10 @@ router.post('/auth/login', loginValidator, handleValidationErrors, UserControlle
 
 router.get('/auth/profile', checkAuth, UserController.getProfile);
 
+router.post('/auth/logout', checkAuth, UserController.logout);
+
+router.get('/auth/activate/:link', UserController.activate);
+
+router.get('/auth/refresh', checkAuth, UserController.refreshToken);
+
 export default router;
