@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as UserController from '../controllers/UserController.js';
+import * as UserController from '../controllers/userController.js';
 import checkAuth from '../utils/checkAuth.js';
 import handleValidationErrors from '../utils/handleValidationErrors.js';
 import { loginValidator, registerValidator } from '../validations/auth.js';
@@ -13,8 +13,6 @@ router.post('/auth/login', loginValidator, handleValidationErrors, UserControlle
 router.get('/auth/profile', checkAuth, UserController.getProfile);
 
 router.post('/auth/logout', checkAuth, UserController.logout);
-
-router.get('/auth/activate/:link', UserController.activate);
 
 router.get('/auth/refresh', checkAuth, UserController.refreshToken);
 

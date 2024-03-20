@@ -1,10 +1,8 @@
 import argon2 from 'argon2';
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 import { UserDto } from '../dto/userDto.js';
 import { ApiError } from '../exeptions/apiError.js';
 import User from '../models/userModel.js';
-import * as mailService from './mailService.js';
 import * as tokenService from './tokenService.js';
 
 export const register = async (req) => {
@@ -31,8 +29,6 @@ export const register = async (req) => {
 
         const passwordHash = await argon2.hash(req.body.password);
 
-        const activationLink = uuidv4();
-
         const newUser = new User({
             name: req.body.name,
             last_name: req.body.last_name,
@@ -40,15 +36,9 @@ export const register = async (req) => {
             email: req.body.email,
             phone: req.body.phone,
             passwordHash,
-            activationLink,
         });
 
         const user = await newUser.save({ session });
-
-        await mailService.sendActivationMail(
-            req.body.email,
-            `${process.env.API_URL}/api/auth/activate/${activationLink}`,
-        );
 
         const userDto = new UserDto(user);
 
@@ -77,7 +67,7 @@ export const login = async (req) => {
         });
 
         if (!user) {
-            throw ApiError.BadRequestExeption('Неверный телефон/почта или пароль.');
+            throw ApiError.NotFoundExeption('Неверный телефон/почта или пароль.');
         }
 
         const passwordMatch = await argon2.verify(user.passwordHash, req.body.password);
@@ -127,21 +117,6 @@ export const getProfile = async (req) => {
             success: true,
             ...user._doc,
         };
-    } catch (error) {
-        throw error;
-    }
-};
-
-export const activate = async (activationLink) => {
-    try {
-        const user = await User.findOne({ activationLink });
-        if (!user) {
-            throw ApiError.BadRequestExeption('Некорректная ссылка активации');
-        }
-
-        user.isActivated = true;
-
-        await user.save();
     } catch (error) {
         throw error;
     }

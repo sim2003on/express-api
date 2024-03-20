@@ -2,7 +2,7 @@ import * as userService from '../services/userService.js';
 
 export const register = async (req, res, next) => {
     try {
-        const userData = await userService.register(req, res);
+        const userData = await userService.register(req);
 
         res.cookie('refreshToken', userData.refreshToken, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -21,7 +21,7 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
     try {
-        const userData = await userService.login(req, res);
+        const userData = await userService.login(req);
         res.cookie('refreshToken', userData.refreshToken, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true,
@@ -51,17 +51,6 @@ export const getProfile = async (req, res, next) => {
         return res.status(200).json(userData);
     } catch (error) {
         console.error('Ошибка при получении профиля:', error.message);
-        next(error);
-    }
-};
-
-export const activate = async (req, res, next) => {
-    try {
-        const activationLink = req.params.link;
-        await userService.activate(activationLink);
-        return res.redirect(process.env.CLIENT_URL);
-    } catch (error) {
-        console.error(error);
         next(error);
     }
 };
