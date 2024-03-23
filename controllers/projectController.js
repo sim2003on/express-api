@@ -21,24 +21,34 @@ export const getAllProjects = async (req, res, next) => {
 
 export const getOneProject = async (req, res, next) => {
     try {
-    } catch (error) {}
+        const projectId = req.params.id;
+        const project = await projectService.getOneProject(projectId);
+        return res.status(200).json(project);
+    } catch (error) {
+        next(error);
+    }
 };
 
 export const updateProject = async (req, res, next) => {
     try {
-    } catch (error) {}
+        const projectId = req.params.id;
+        const { newData } = req.body;
+
+        const updatedProject = await projectService.updateProject(projectId, newData, req);
+
+        return res.status(200).json(updatedProject);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
 };
 
 export const removeProject = async (req, res, next) => {
     try {
-    } catch (error) {}
-};
-
-export const uploadFile = async (req, res, next) => {
-    try {
-        const result = await projectService.uploadFile(req);
-        res.json(result);
+        const projectId = req.params.id;
+        await projectService.removeProject(projectId);
+        return res.status(200).json({ message: 'Проект успешно удален' });
     } catch (error) {
-        console.error(error);
+        next(error);
     }
 };

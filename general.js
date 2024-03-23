@@ -10,17 +10,17 @@ import router from './routes/index.js';
 
 dotenv.config();
 
-// Config
 const PORT = process.env.PORT;
 
-// Init
 const app = express();
 
-// Middlewares
+app.use('/uploads', express.static('uploads'));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 app.use('/api', router);
+app.use('/uploads', express.static('uploads'));
 app.use(errorMiddleware);
 
 const runServer = async () => {
@@ -34,5 +34,4 @@ const runServer = async () => {
     }
 };
 
-// Start server
 runServer();

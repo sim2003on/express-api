@@ -22,6 +22,10 @@ const ProjectSchema = new mognoose.Schema(
             type: String,
             required: true,
         },
+        projectFolder: {
+            type: String,
+            required: true,
+        },
         details: {
             totalArea: {
                 type: Number,
