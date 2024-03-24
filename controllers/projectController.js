@@ -32,13 +32,12 @@ export const getOneProject = async (req, res, next) => {
 export const updateProject = async (req, res, next) => {
     try {
         const projectId = req.params.id;
-        const { newData } = req.body;
+        const newData = req.body?.newData || null;
 
         const updatedProject = await projectService.updateProject(projectId, newData, req);
 
         return res.status(200).json(updatedProject);
     } catch (error) {
-        console.error(error);
         next(error);
     }
 };

@@ -1,6 +1,4 @@
-import fs from 'fs';
 import multer from 'multer';
-import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiError } from '../exeptions/apiError.js';
 import createFolderIfNotExists from '../utils/createFolderIfNotExists.js';
@@ -54,60 +52,4 @@ const handleProjectCreation = async (req, res, next) => {
     }
 };
 
-const deleteOldFile = (projectId, filename) => {
-    const projectFolder = path.join(uploadPath, projectId);
-    const filePath = path.join(projectFolder, filename);
-
-    if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-    }
-};
-
-const moveFileToDestination = async (req, res, next) => {
-    try {
-        if (!req.files || !req.projectId) {
-            throw ApiError.BadRequestExeption('Нет файлов или идентификатора проекта');
-        }
-
-        const mainImage = req.files['mainImage'] ? req.files['mainImage'][0] : null;
-        const planImage = req.files['planImage'] ? req.files['planImage'][0] : null;
-
-        if (!mainImage && !planImage) {
-            throw ApiError.BadRequestExeption('Нет файлов');
-        }
-
-        const projectFolder = path.join(uploadPath, req.projectId);
-
-        await Promise.all([
-            createFolderIfNotExists(projectFolder),
-            createFolderIfNotExists(path.join(projectFolder, 'mainImage')),
-            createFolderIfNotExists(path.join(projectFolder, 'planImage')),
-        ]);
-
-        if (mainImage) {
-            deleteOldFile(req.projectId, 'mainImage/' + mainImage.filename);
-            await fs.promises.rename(
-                mainImage.path,
-                path.join(projectFolder, 'mainImage', mainImage.filename),
-            );
-        }
-
-        if (planImage) {
-            deleteOldFile(req.projectId, 'planImage/' + planImage.filename);
-            await fs.promises.rename(
-                planImage.path,
-                path.join(projectFolder, 'planImage', planImage.filename),
-            );
-        }
-
-        req.mainImageName = mainImage ? mainImage.filename : null;
-        req.planImageName = planImage ? planImage.filename : null;
-        req.uploadPath = uploadPath;
-
-        next();
-    } catch (error) {
-        next(error);
-    }
-};
-
-export { handleProjectCreation, moveFileToDestination, upload };
+export { handleProjectCreation, upload };
