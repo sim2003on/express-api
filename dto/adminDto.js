@@ -1,13 +1,14 @@
-export class UserDto {
+export class AdminDto {
+    login;
     email;
-    phone;
+    role;
     id;
-    isActivated;
 
     constructor(model) {
         this.email = model.email;
         this.phone = model.phone;
         this.id = model._id;
-        this.isActivated = model.isActivated;
+        this.login = model.login;
+        this.role = model.role;
     }
 }

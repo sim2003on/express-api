@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
+
 import { logger } from './logger/index.js';
 
 import { errorMiddleware } from './middleware/errorMiddleware.js';
@@ -19,6 +20,7 @@ app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+app.disable('x-powered-by');
 app.use('/api', router);
 app.use('/uploads', express.static('uploads'));
 app.use(errorMiddleware);

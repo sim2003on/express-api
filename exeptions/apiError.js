@@ -20,4 +20,8 @@ export class ApiError extends Error {
     static NotFoundExeption(message) {
         return new ApiError(404, message);
     }
+
+    static ConflictExeption(message) {
+        return new ApiError(409, message);
+    }
 }

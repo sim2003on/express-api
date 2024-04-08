@@ -46,6 +46,7 @@ const handleProjectCreation = async (req, res, next) => {
         await createFolderIfNotExists(uploadPath);
 
         req.projectId = projectId;
+
         next();
     } catch (error) {
         next(error);

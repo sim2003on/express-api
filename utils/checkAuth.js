@@ -1,5 +1,5 @@
 import { ApiError } from '../exeptions/apiError.js';
-import * as tokenService from '../services/tokenService.js';
+import tokenService from '../services/tokenService.js';
 
 export default (req, res, next) => {
     const token = (req.headers.authorization || '').replace('Bearer ', '');
@@ -7,7 +7,7 @@ export default (req, res, next) => {
     if (token) {
         try {
             const decodedToken = tokenService.validateAccessToken(token);
-            req.userId = decodedToken.id;
+            req.adminId = decodedToken.id;
         } catch (error) {
             throw ApiError.UnauthorizedExeption();
         }
