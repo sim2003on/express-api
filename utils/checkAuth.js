@@ -11,6 +11,8 @@ export default (req, res, next) => {
         } catch (error) {
             throw ApiError.UnauthorizedExeption();
         }
+    } else {
+        throw ApiError.UnauthorizedExeption();
     }
 
     next();

@@ -3,11 +3,22 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiError } from '../exeptions/apiError.js';
 import createFolderIfNotExists from '../utils/createFolderIfNotExists.js';
 
-const uploadPath = 'uploads/projects';
+const projectsUploadPath = 'uploads/projects';
+const portfoliosUploadPath = 'uploads/portfolios';
 
-const storage = multer.diskStorage({
+const storageProjects = multer.diskStorage({
     destination: (_, __, callback) => {
-        callback(null, uploadPath);
+        callback(null, projectsUploadPath);
+    },
+    filename: (_, file, callback) => {
+        const uniqueFilename = uuidv4() + '-' + file.originalname;
+        callback(null, uniqueFilename);
+    },
+});
+
+const storagePortfolios = multer.diskStorage({
+    destination: (_, __, callback) => {
+        callback(null, portfoliosUploadPath);
     },
     filename: (_, file, callback) => {
         const uniqueFilename = uuidv4() + '-' + file.originalname;
@@ -23,8 +34,8 @@ const fileFilter = (_, file, callback) => {
     }
 };
 
-const upload = multer({
-    storage,
+export const uploadProject = multer({
+    storage: storageProjects,
     fileFilter,
     limits: {
         fileSize: 1024 * 1024 * 5,
@@ -40,10 +51,23 @@ const upload = multer({
     },
 ]);
 
-const handleProjectCreation = async (req, res, next) => {
+export const uploadPortfolio = multer({
+    storage: storagePortfolios,
+    fileFilter,
+    limits: {
+        fileSize: 1024 * 1024 * 5,
+    },
+}).fields([
+    {
+        name: 'image',
+        maxCount: 1,
+    },
+]);
+
+export const handleProjectCreation = async (req, res, next) => {
     try {
         const projectId = uuidv4();
-        await createFolderIfNotExists(uploadPath);
+        await createFolderIfNotExists(projectsUploadPath);
 
         req.projectId = projectId;
 
@@ -53,4 +77,15 @@ const handleProjectCreation = async (req, res, next) => {
     }
 };
 
-export { handleProjectCreation, upload };
+export const handlePortfolioCreation = async (req, res, next) => {
+    try {
+        const portfolioId = uuidv4();
+        await createFolderIfNotExists(portfoliosUploadPath);
+
+        req.portfolioId = portfolioId;
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+};

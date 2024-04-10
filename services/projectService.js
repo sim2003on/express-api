@@ -47,30 +47,40 @@ class ProjectService {
             const newProject = new projectModel({
                 ...projectData,
                 projectFolder: projectId,
-                mainImgURL: `uploads/projects/${projectId}/mainImage/${mainImage.filename}`,
+                mainImgURL: path.join(
+                    'uploads/projects',
+                    projectId,
+                    'mainImage',
+                    mainImage.filename,
+                ),
                 mainImgFileName: mainImage.filename,
-                planImgURL: `uploads/projects/${projectId}/planImage/${planImage.filename}`,
+                planImgURL: path.join(
+                    'uploads/projects',
+                    projectId,
+                    'planImage',
+                    planImage.filename,
+                ),
                 planImgFileName: planImage.filename,
             });
 
             await newProject.save();
-            const projectDto = new ProjectDto(newProject);
-            return projectDto;
+            return new ProjectDto(newProject);
         } catch (error) {
             if (req.files['mainImage']) {
-                deleteFilesIfError(req.files['mainImage'][0].filename);
+                deleteFilesIfError(uploadPath, req.files['mainImage'][0].filename);
             }
             if (req.files['planImage']) {
-                deleteFilesIfError(req.files['planImage'][0].filename);
+                deleteFilesIfError(uploadPath, req.files['planImage'][0].filename);
             }
             console.error(error);
             throw error;
         }
     }
 
-    async getAllProjects() {
+    async getAllProjects(region) {
         try {
-            const projects = await projectModel.find();
+            const projects = await projectModel.find(region ? { region: region } : {});
+
             if (projects.length === 0) {
                 throw ApiError.NotFoundExeption('Проекты не найдены');
             }
@@ -108,29 +118,47 @@ class ProjectService {
             const planImage = req.files['planImage'] ? req.files['planImage'][0] : null;
 
             if (mainImage) {
-                deleteOldFile(project.projectFolder, 'mainImage/' + project.mainImgFileName);
+                deleteOldFile(
+                    uploadPath,
+                    project.projectFolder + '/mainImage/',
+                    project.mainImgFileName,
+                );
                 await fs.rename(
                     mainImage.path,
-                    path.join(uploadPath + project.projectFolder, 'mainImage', mainImage.filename),
+                    path.join(uploadPath, project.projectFolder, 'mainImage', mainImage.filename),
                 );
             }
 
             if (planImage) {
-                deleteOldFile(project.projectFolder, 'planImage/' + project.planImgFileName);
+                deleteOldFile(
+                    uploadPath,
+                    project.projectFolder + '/planImage/',
+                    project.planImgFileName,
+                );
                 await fs.rename(
                     planImage.path,
-                    path.join(uploadPath + project.projectFolder, 'planImage', planImage.filename),
+                    path.join(uploadPath, project.projectFolder, 'planImage', planImage.filename),
                 );
             }
 
             const newData = {
                 ...(data && JSON.parse(data)),
                 ...(mainImage && {
-                    mainImgURL: `${uploadPath}${project.projectFolder}/mainImage/${mainImage.filename}`,
+                    mainImgURL: path.join(
+                        uploadPath,
+                        project.projectFolder,
+                        'mainImage',
+                        mainImage.filename,
+                    ),
                     mainImgFileName: mainImage.filename,
                 }),
                 ...(planImage && {
-                    planImgURL: `${uploadPath}${project.projectFolder}/planImage/${planImage.filename}`,
+                    planImgURL: path.join(
+                        uploadPath,
+                        project.projectFolder,
+                        'planImage',
+                        planImage.filename,
+                    ),
                     planImgFileName: planImage.filename,
                 }),
             };
@@ -142,10 +170,10 @@ class ProjectService {
             return projectDto;
         } catch (error) {
             if (req.files['mainImage']) {
-                deleteFilesIfError(req.files['mainImage'][0].filename);
+                deleteFilesIfError(uploadPath, req.files['mainImage'][0].filename);
             }
             if (req.files['planImage']) {
-                deleteFilesIfError(req.files['planImage'][0].filename);
+                deleteFilesIfError(uploadPath, req.files['planImage'][0].filename);
             }
             console.error(error);
             throw error;
@@ -158,7 +186,7 @@ class ProjectService {
             if (!project) {
                 throw ApiError.NotFoundExeption('Проект не найден');
             }
-            const projectFolderPath = `${uploadPath}${project.projectFolder}`;
+            const projectFolderPath = path.join(uploadPath, project.projectFolder);
 
             await fs.access(projectFolderPath);
             await fs.rm(projectFolderPath, { recursive: true, force: true });

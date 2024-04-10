@@ -12,7 +12,9 @@ class ProjectController {
     }
     async getAllProjects(req, res, next) {
         try {
-            const projects = await projectService.getAllProjects();
+            const region = req.query?.region;
+
+            const projects = await projectService.getAllProjects(region);
             return res.status(200).json(projects);
         } catch (error) {
             next(error);
@@ -30,9 +32,9 @@ class ProjectController {
     async updateProject(req, res, next) {
         try {
             const projectId = req.params.id;
-            const newData = req.body?.newData || null;
+            const data = req.body?.data;
 
-            const updatedProject = await projectService.updateProject(projectId, newData, req);
+            const updatedProject = await projectService.updateProject(projectId, data, req);
 
             return res.status(200).json(updatedProject);
         } catch (error) {

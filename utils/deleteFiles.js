@@ -1,8 +1,7 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'fs/promises'
+import path from 'path'
 
-export const deleteFilesIfError = async (fileName) => {
-    const uploadPath = 'uploads/projects';
+export const deleteFilesIfError = async (uploadPath, fileName) => {
     const filePath = path.join(uploadPath, fileName);
 
     try {
@@ -13,10 +12,9 @@ export const deleteFilesIfError = async (fileName) => {
     }
 };
 
-export const deleteOldFile = async (projectFolder, filename) => {
-    const uploadPath = 'uploads/projects';
-    const projectPath = path.join(uploadPath, projectFolder);
-    const filePath = path.join(projectPath, filename);
+export const deleteOldFile = async (uploadPath, folder, filename) => {
+    const folderPath = path.join(uploadPath, folder);
+    const filePath = path.join(folderPath, filename);
 
     try {
         await fs.access(filePath);
