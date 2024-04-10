@@ -40,7 +40,7 @@ class PortfolioService {
                 portfolioFolder: portfolioId,
                 imgName: image.filename,
                 isIndividual: isIndividual,
-                imgURL: `uploads/portfolios/${portfolioId}/${image.filename}`,
+                imgURL: uploadPath + portfolioId + '/' + image.filename,
                 imgFileName: image.filename,
             });
 
@@ -96,14 +96,14 @@ class PortfolioService {
                 deleteOldFile(uploadPath, portfolio.portfolioFolder, portfolio.imgName);
                 await fs.rename(
                     image.path,
-                    path.join(uploadPath, portfolio.portfolioFolder, image.filename),
+                    uploadPath + portfolio.portfolioFolder + '/' + image.filename,
                 );
             }
 
             const newData = {
                 ...(data && JSON.parse(data)),
                 ...(image && {
-                    imgURL: path.join(uploadPath, portfolio.portfolioFolder, image.filename),
+                    imgURL: uploadPath + portfolio.portfolioFolder + '/' + image.filename,
                     imgName: image.filename,
                 }),
             };
