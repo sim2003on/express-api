@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import projectController from '../controllers/projectController.js';
-import { handleProjectCreation, uploadProject } from '../middleware/projectUploadMiddleware.js';
+import { handleProjectCreation, uploadProject } from '../middleware/uploadMiddleware.js';
 import checkAuth from '../utils/checkAuth.js';
 
 const router = new Router();

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import portfolioController from '../controllers/portfolioController.js';
-import { handlePortfolioCreation, uploadPortfolio } from '../middleware/projectUploadMiddleware.js';
+import { handlePortfolioCreation, uploadPortfolio } from '../middleware/uploadMiddleware.js';
 import checkAuth from '../utils/checkAuth.js';
 
 const router = new Router();
