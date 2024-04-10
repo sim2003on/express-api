@@ -47,19 +47,9 @@ class ProjectService {
             const newProject = new projectModel({
                 ...projectData,
                 projectFolder: projectId,
-                mainImgURL: path.join(
-                    'uploads/projects',
-                    projectId,
-                    'mainImage',
-                    mainImage.filename,
-                ),
+                mainImgURL: uploadPath + projectId + '/mainImage/' + mainImage.filename,
                 mainImgFileName: mainImage.filename,
-                planImgURL: path.join(
-                    'uploads/projects',
-                    projectId,
-                    'planImage',
-                    planImage.filename,
-                ),
+                planImgURL: uploadPath + projectId + '/planImage/' + planImage.filename,
                 planImgFileName: planImage.filename,
             });
 
@@ -125,7 +115,7 @@ class ProjectService {
                 );
                 await fs.rename(
                     mainImage.path,
-                    path.join(uploadPath, project.projectFolder, 'mainImage', mainImage.filename),
+                    uploadPath + project.projectFolder + '/mainImage/' + mainImage.filename,
                 );
             }
 
@@ -137,28 +127,20 @@ class ProjectService {
                 );
                 await fs.rename(
                     planImage.path,
-                    path.join(uploadPath, project.projectFolder, 'planImage', planImage.filename),
+                    uploadPath + project.projectFolder + '/planImage/' + planImage.filename,
                 );
             }
 
             const newData = {
                 ...(data && JSON.parse(data)),
                 ...(mainImage && {
-                    mainImgURL: path.join(
-                        uploadPath,
-                        project.projectFolder,
-                        'mainImage',
-                        mainImage.filename,
-                    ),
+                    mainImgURL:
+                        uploadPath + project.projectFolder + '/mainImage/' + mainImage.filename,
                     mainImgFileName: mainImage.filename,
                 }),
                 ...(planImage && {
-                    planImgURL: path.join(
-                        uploadPath,
-                        project.projectFolder,
-                        'planImage',
-                        planImage.filename,
-                    ),
+                    planImgURL:
+                        uploadPath + project.projectFolder + '/planImage/' + planImage.filename,
                     planImgFileName: planImage.filename,
                 }),
             };
