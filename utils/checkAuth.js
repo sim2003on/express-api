@@ -3,7 +3,6 @@ import tokenService from '../services/tokenService.js';
 
 export default (req, res, next) => {
     const token = (req.headers.authorization || '').replace('Bearer ', '');
-
     if (token) {
         try {
             const decodedToken = tokenService.validateAccessToken(token);
@@ -14,6 +13,5 @@ export default (req, res, next) => {
     } else {
         throw ApiError.UnauthorizedExeption();
     }
-
     next();
 };

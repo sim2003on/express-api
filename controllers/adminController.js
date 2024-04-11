@@ -4,7 +4,6 @@ class AdminController {
     async register(req, res, next) {
         try {
             const adminData = await adminService.register(req);
-
             res.cookie('refreshToken', adminData.refreshToken, {
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
@@ -60,7 +59,6 @@ class AdminController {
         try {
             const { refreshToken } = req.cookies;
             const adminData = await adminService.refresh(refreshToken);
-
             res.cookie('refreshToken', adminData.refreshToken, {
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 httpOnly: true,

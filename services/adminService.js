@@ -12,30 +12,22 @@ class AdminService {
 
         try {
             const isExistAdmin = await Admin.findOne({ email: req.body.email });
-
             if (isExistAdmin) {
                 throw ApiError.ConflictExeption('Администратор уже существует');
             }
-
             const passwordHash = await argon2.hash(req.body.password);
-
             const newAdmin = new Admin({
                 login: req.body.login,
                 email: req.body.email,
                 role: req.body.role,
                 passwordHash,
             });
-
             const admin = await newAdmin.save({ session });
-
             const adminDto = new AdminDto(admin);
-
             const tokens = tokenService.generateTokens({ ...adminDto });
             await tokenService.saveToken(adminDto.id, tokens.refreshToken);
-
             await session.commitTransaction();
             session.endSession();
-
             return {
                 admin: adminDto,
                 accessToken: tokens.accessToken,
@@ -51,24 +43,17 @@ class AdminService {
     async login(req) {
         try {
             const admin = await Admin.findOne({ email: req.body.email });
-
             if (!admin) {
                 throw ApiError.NotFoundExeption('Неверный логин/почта или пароль.');
             }
-
             const passwordMatch = await argon2.verify(admin.passwordHash, req.body.password);
-
             if (!passwordMatch) {
                 throw ApiError.BadRequestExeption('Неверный логин/почта или пароль.');
             }
-
             const adminDto = new AdminDto(admin);
-
             const tokens = tokenService.generateTokens({ ...adminDto });
             await tokenService.saveToken(adminDto.id, tokens.refreshToken);
-
             const { accessToken, refreshToken } = tokens;
-
             return {
                 success: true,
                 message: 'Авторизация прошла успешно',
@@ -92,13 +77,10 @@ class AdminService {
     async getProfile(req) {
         try {
             const admin = await Admin.findById(req.adminId);
-
             if (!admin) {
                 throw ApiError.NotFoundExeption('Администратор не найден');
             }
-
             const adminDto = new AdminDto(admin);
-
             return {
                 success: true,
                 ...adminDto,
@@ -118,9 +100,7 @@ class AdminService {
             throw ApiError.UnauthorizedExeption();
         }
         const admin = await Admin.findById(adminData.id);
-
         const adminDto = new AdminDto(admin);
-
         const tokens = tokenService.generateTokens({ ...adminDto });
         await tokenService.saveToken(adminDto.id, tokens.refreshToken);
         return { ...tokens, admin: adminDto };

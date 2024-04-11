@@ -14,27 +14,19 @@ class PortfolioService {
             if (!req.files || !req.body.data) {
                 throw ApiError.BadRequestExeption('Нет файлов или данных для портфолио');
             }
-
             const isIndividual = req.body.isIndividual || false;
-
             const portfolioData = JSON.parse(req.body.data);
-
             const image = req.files['image'] ? req.files['image'][0] : null;
-
             if (!image) {
                 throw ApiError.BadRequestExeption('Нет файлов');
             }
-
             const portfolioId = req.portfolioId;
             const portfolioFolder = path.join(uploadPath, portfolioId);
-
             await Promise.all([
                 createFolderIfNotExists(uploadPath),
                 createFolderIfNotExists(portfolioFolder),
             ]);
-
             await fs.rename(image.path, path.join(portfolioFolder, image.filename));
-
             const newPortfolio = new portfolioModel({
                 ...portfolioData,
                 portfolioFolder: portfolioId,
@@ -43,7 +35,6 @@ class PortfolioService {
                 imgURL: uploadPath + portfolioId + '/' + image.filename,
                 imgFileName: image.filename,
             });
-
             await newPortfolio.save();
             return new PortfolioDto(newPortfolio);
         } catch (error) {
@@ -85,13 +76,10 @@ class PortfolioService {
     async updatePortfolio(id, data, req) {
         try {
             const portfolio = await portfolioModel.findById(id);
-
             if (!portfolio) {
                 throw ApiError.NotFoundExeption('Портфолио не найден');
             }
-
             const image = req.files['image'] ? req.files['image'][0] : null;
-
             if (image) {
                 deleteOldFile(uploadPath, portfolio.portfolioFolder, portfolio.imgName);
                 await fs.rename(
@@ -99,7 +87,6 @@ class PortfolioService {
                     uploadPath + portfolio.portfolioFolder + '/' + image.filename,
                 );
             }
-
             const newData = {
                 ...(data && JSON.parse(data)),
                 ...(image && {
@@ -107,11 +94,9 @@ class PortfolioService {
                     imgName: image.filename,
                 }),
             };
-
             const updatedPortfolio = await portfolioModel.findByIdAndUpdate(id, newData, {
                 new: true,
             });
-
             return new PortfolioDto(updatedPortfolio);
         } catch (error) {
             const image = req.files['image'] ? req.files['image'][0] : null;
@@ -129,7 +114,6 @@ class PortfolioService {
             throw ApiError.NotFoundExeption('Портфолио не найден');
         }
         const portfolioFolderPath = path.join(uploadPath, portfolio.portfolioFolder);
-
         await fs.access(portfolioFolderPath);
         await fs.rm(portfolioFolderPath, { recursive: true, force: true });
         await portfolioModel.findByIdAndDelete(id);

@@ -14,11 +14,8 @@ router.post(
 );
 
 router.get('/portfolio', portfolioController.getAllPortfolios);
-
 router.get('/portfolio/:id', portfolioController.getOnePortfolio);
-
 router.patch('/portfolio/:id', checkAuth, uploadPortfolio, portfolioController.updatePortfolio);
-
 router.delete('/portfolio/:id', checkAuth, portfolioController.removePortfolio);
 
 export default router;

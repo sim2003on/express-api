@@ -68,9 +68,7 @@ export const handleProjectCreation = async (req, res, next) => {
     try {
         const projectId = uuidv4();
         await createFolderIfNotExists(projectsUploadPath);
-
         req.projectId = projectId;
-
         next();
     } catch (error) {
         next(error);
@@ -81,9 +79,7 @@ export const handlePortfolioCreation = async (req, res, next) => {
     try {
         const portfolioId = uuidv4();
         await createFolderIfNotExists(portfoliosUploadPath);
-
         req.portfolioId = portfolioId;
-
         next();
     } catch (error) {
         next(error);

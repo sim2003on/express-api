@@ -14,11 +14,8 @@ router.post(
 );
 
 router.get('/projects', projectController.getAllProjects);
-
 router.get('/projects/:id', projectController.getOneProject);
-
 router.patch('/projects/:id', checkAuth, uploadProject, projectController.updateProject);
-
 router.delete('/projects/:id', checkAuth, projectController.removeProject);
 
 export default router;

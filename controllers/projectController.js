@@ -4,7 +4,6 @@ class ProjectController {
     async createProject(req, res, next) {
         try {
             const projectData = await projectService.createProject(req);
-
             return res.status(201).json({ message: 'Проект успешно создан', projectData });
         } catch (error) {
             next(error);
@@ -13,7 +12,6 @@ class ProjectController {
     async getAllProjects(req, res, next) {
         try {
             const region = req.query?.region;
-
             const projects = await projectService.getAllProjects(region);
             return res.status(200).json(projects);
         } catch (error) {
@@ -33,9 +31,7 @@ class ProjectController {
         try {
             const projectId = req.params.id;
             const data = req.body?.data;
-
             const updatedProject = await projectService.updateProject(projectId, data, req);
-
             return res.status(200).json(updatedProject);
         } catch (error) {
             next(error);

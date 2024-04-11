@@ -15,26 +15,20 @@ class ProjectService {
             if (!req.files || !req.body.data) {
                 throw ApiError.BadRequestExeption('Нет файлов или данных проекта');
             }
-
             const projectData = JSON.parse(req.body.data);
-
             const mainImage = req.files['mainImage'] ? req.files['mainImage'][0] : null;
             const planImage = req.files['planImage'] ? req.files['planImage'][0] : null;
-
             if (!mainImage || !planImage) {
                 throw ApiError.BadRequestExeption('Нет файлов');
             }
-
             const projectId = req.projectId;
             const projectFolder = path.join(uploadPath, projectId);
-
             await Promise.all([
                 createFolderIfNotExists(uploadPath),
                 createFolderIfNotExists(projectFolder),
                 createFolderIfNotExists(path.join(projectFolder, 'mainImage')),
                 createFolderIfNotExists(path.join(projectFolder, 'planImage')),
             ]);
-
             await fs.rename(
                 mainImage.path,
                 path.join(projectFolder, 'mainImage', mainImage.filename),
@@ -43,7 +37,6 @@ class ProjectService {
                 planImage.path,
                 path.join(projectFolder, 'planImage', planImage.filename),
             );
-
             const newProject = new projectModel({
                 ...projectData,
                 projectFolder: projectId,
@@ -52,7 +45,6 @@ class ProjectService {
                 planImgURL: uploadPath + projectId + '/planImage/' + planImage.filename,
                 planImgFileName: planImage.filename,
             });
-
             await newProject.save();
             return new ProjectDto(newProject);
         } catch (error) {
@@ -99,14 +91,11 @@ class ProjectService {
     async updateProject(id, data, req) {
         try {
             const project = await projectModel.findById(id);
-
             if (!project) {
                 throw ApiError.NotFoundExeption('Проект не найден');
             }
-
             const mainImage = req.files['mainImage'] ? req.files['mainImage'][0] : null;
             const planImage = req.files['planImage'] ? req.files['planImage'][0] : null;
-
             if (mainImage) {
                 deleteOldFile(
                     uploadPath,
@@ -118,7 +107,6 @@ class ProjectService {
                     uploadPath + project.projectFolder + '/mainImage/' + mainImage.filename,
                 );
             }
-
             if (planImage) {
                 deleteOldFile(
                     uploadPath,
@@ -130,7 +118,6 @@ class ProjectService {
                     uploadPath + project.projectFolder + '/planImage/' + planImage.filename,
                 );
             }
-
             const newData = {
                 ...(data && JSON.parse(data)),
                 ...(mainImage && {
@@ -144,11 +131,8 @@ class ProjectService {
                     planImgFileName: planImage.filename,
                 }),
             };
-
             const updatedProject = await projectModel.findByIdAndUpdate(id, newData, { new: true });
-
             const projectDto = new ProjectDto(updatedProject);
-
             return projectDto;
         } catch (error) {
             if (req.files['mainImage']) {
@@ -169,7 +153,6 @@ class ProjectService {
                 throw ApiError.NotFoundExeption('Проект не найден');
             }
             const projectFolderPath = path.join(uploadPath, project.projectFolder);
-
             await fs.access(projectFolderPath);
             await fs.rm(projectFolderPath, { recursive: true, force: true });
             await projectModel.findByIdAndDelete(id);
