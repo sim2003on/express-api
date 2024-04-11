@@ -13,7 +13,8 @@ class PortfolioController {
 
     async getAllPortfolios(req, res, next) {
         try {
-            const portfolioData = await portfolioService.getAllPortfolios();
+            const query = req.query?.individual;
+            const portfolioData = await portfolioService.getAllPortfolios(query);
             return res.status(200).json(portfolioData);
         } catch (error) {
             next(error);

@@ -14,8 +14,9 @@ class PortfolioService {
             if (!req.files || !req.body.data) {
                 throw ApiError.BadRequestExeption('Нет файлов или данных для портфолио');
             }
-            const isIndividual = req.body.isIndividual || false;
+
             const portfolioData = JSON.parse(req.body.data);
+            const isIndividual = portfolioData.isIndividual || false;
             const image = req.files['image'] ? req.files['image'][0] : null;
             if (!image) {
                 throw ApiError.BadRequestExeption('Нет файлов');
@@ -47,11 +48,17 @@ class PortfolioService {
         }
     }
 
-    async getAllPortfolios() {
+    async getAllPortfolios(query) {
         try {
-            const portfolios = await portfolioModel.find();
+            let portfolios;
+            if (query === undefined) {
+                portfolios = await portfolioModel.find();
+            } else {
+                portfolios = await portfolioModel.find({ isIndividual: query });
+            }
+
             if (portfolios.length === 0) {
-                throw ApiError.NotFoundExeption('Список портфолип пуст');
+                throw ApiError.NotFoundExeption('Список портфолио пуст');
             }
             return portfolios.map((portfolio) => new PortfolioDto(portfolio));
         } catch (error) {
