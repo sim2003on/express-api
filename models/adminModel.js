@@ -21,6 +21,10 @@ const AdminSchema = new mongoose.Schema(
             enum: ['admin', 'superadmin'],
             default: 'admin',
         },
+        region: {
+            type: String,
+            required: true,
+        },
     },
     {
         timestamps: true,

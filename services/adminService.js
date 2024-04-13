@@ -21,6 +21,7 @@ class AdminService {
                 login: req.body.login,
                 email: req.body.email,
                 role: req.body.role,
+                region: req.body.region,
                 passwordHash,
             });
             const admin = await newAdmin.save({ session });
@@ -86,6 +87,13 @@ class AdminService {
                 success: true,
                 ...adminDto,
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resetPassword(req) {
+        try {
         } catch (error) {
             throw error;
         }

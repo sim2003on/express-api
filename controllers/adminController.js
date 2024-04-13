@@ -55,6 +55,16 @@ class AdminController {
         }
     }
 
+    async resetPassword(req, res, next) {
+        try {
+            const adminData = await adminService.resetPassword(req);
+            return res.status(200).json(adminData);
+        } catch (error) {
+            console.error('Ошибка при сбросе пароля:', error.message);
+            next(error);
+        }
+    }
+
     async refreshToken(req, res, next) {
         try {
             const { refreshToken } = req.cookies;
