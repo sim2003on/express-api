@@ -11,6 +11,17 @@ export const registerValidator = [
         .isEmail(),
     body('password', 'Пароль должен быть больше 6').isLength({ min: 6 }),
     body('role', 'Неверный формат роли').isIn(['user', 'admin', 'superadmin']),
+    body('region', 'Неверный формат региона').isIn([
+        '61',
+        '36',
+        '23',
+        '93',
+        '123',
+        '34',
+        '48',
+        '43',
+        '71',
+    ]),
 ];
 
 export const loginValidator = [
