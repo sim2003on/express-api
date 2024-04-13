@@ -1,13 +1,12 @@
 export class AdminDto {
+    id;
     login;
     email;
     role;
-    id;
 
     constructor(model) {
-        this.email = model.email;
-        this.phone = model.phone;
         this.id = model._id;
+        this.email = model.email;
         this.login = model.login;
         this.role = model.role;
     }

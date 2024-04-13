@@ -7,14 +7,15 @@ import tokenService from './tokenService.js';
 
 class AdminService {
     async register(req) {
-        const session = await mongoose.startSession();
-        session.startTransaction();
-
+        let session;
         try {
             const isExistAdmin = await Admin.findOne({ email: req.body.email });
             if (isExistAdmin) {
                 throw ApiError.ConflictExeption('Администратор уже существует');
             }
+            session = await mongoose.startSession();
+            session.startTransaction();
+
             const passwordHash = await argon2.hash(req.body.password);
             const newAdmin = new Admin({
                 login: req.body.login,
@@ -34,8 +35,8 @@ class AdminService {
                 refreshToken: tokens.refreshToken,
             };
         } catch (error) {
-            await session.abortTransaction();
-            session.endSession();
+            await session?.abortTransaction();
+            session?.endSession();
             throw error;
         }
     }

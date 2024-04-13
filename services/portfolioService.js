@@ -14,7 +14,6 @@ class PortfolioService {
             if (!req.files || !req.body.data) {
                 throw ApiError.BadRequestExeption('Нет файлов или данных для портфолио');
             }
-
             const portfolioData = JSON.parse(req.body.data);
             const isIndividual = portfolioData.isIndividual || false;
             const image = req.files['image'] ? req.files['image'][0] : null;
@@ -56,7 +55,6 @@ class PortfolioService {
             } else {
                 portfolios = await portfolioModel.find({ isIndividual: query });
             }
-
             if (portfolios.length === 0) {
                 throw ApiError.NotFoundExeption('Список портфолио пуст');
             }
