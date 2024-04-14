@@ -32,7 +32,7 @@ class ProjectController {
             const projectId = req.params.id;
             const data = req.body?.data;
             const updatedProject = await projectService.updateProject(projectId, data, req);
-            return res.status(200).json(updatedProject);
+            return res.status(200).json({ message: 'Проект успешно обновлено', ...updatedProject });
         } catch (error) {
             next(error);
         }

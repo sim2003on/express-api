@@ -25,6 +25,19 @@ const AdminSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        activationLink: {
+            type: String,
+        },
+        isActivated: {
+            type: Boolean,
+            default: false,
+        },
+        resetPasswordToken: {
+            type: String,
+        },
+        resetPasswordExpires: {
+            type: Date,
+        },
     },
     {
         timestamps: true,

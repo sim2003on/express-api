@@ -1,8 +1,10 @@
 import argon2 from 'argon2';
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 import { AdminDto } from '../dto/adminDto.js';
 import { ApiError } from '../exeptions/apiError.js';
 import Admin from '../models/adminModel.js';
+import mailService from './mailService.js';
 import tokenService from './tokenService.js';
 
 class AdminService {
@@ -17,13 +19,16 @@ class AdminService {
             session.startTransaction();
 
             const passwordHash = await argon2.hash(req.body.password);
+            const activationLink = uuidv4();
             const newAdmin = new Admin({
                 login: req.body.login,
                 email: req.body.email,
                 role: req.body.role,
                 region: req.body.region,
+                activationLink: activationLink,
                 passwordHash,
             });
+            await mailService.sendActivationMail(req.body.email, activationLink);
             const admin = await newAdmin.save({ session });
             const adminDto = new AdminDto(admin);
             const tokens = tokenService.generateTokens({ ...adminDto });
@@ -92,8 +97,70 @@ class AdminService {
         }
     }
 
-    async resetPassword(req) {
+    async checkAuth(req) {
         try {
+            const admin = await Admin.findById(req.adminId);
+            if (!admin) {
+                throw ApiError.NotFoundExeption('Администратор не найден');
+            }
+            const adminDto = new AdminDto(admin);
+            return {
+                success: true,
+                ...adminDto,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async activateAccount(activationLink) {
+        try {
+            const admin = await Admin.findOne({ activationLink });
+            if (!admin) {
+                throw ApiError.BadRequestExeption('Ссылка активации недействительна');
+            }
+            admin.isActivated = true;
+            admin.activationLink = undefined;
+            await admin.save();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async forgotPassword(email) {
+        try {
+            const admin = await Admin.findOne({ email });
+            if (!admin) {
+                throw ApiError.NotFoundExeption('Неверная почта');
+            }
+            if (admin.isActivated === false) {
+                throw ApiError.BadRequestExeption('Ваша почта не была потверждена');
+            }
+            const resetToken = uuidv4();
+            admin.resetPasswordToken = resetToken;
+            admin.resetPasswordExpires = Date.now() + 3600000;
+            await admin.save();
+
+            await mailService.sendResetPasswordMail(email, resetToken);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resetPassword(resetToken, newPassword) {
+        try {
+            const admin = await Admin.findOne({
+                resetPasswordToken: resetToken,
+                resetPasswordExpires: { $gt: Date.now() },
+            });
+            if (!admin) {
+                throw ApiError.BadRequestExeption('Неверный токен или время действия истекло');
+            }
+            const passwordHash = await argon2.hash(newPassword);
+            admin.passwordHash = passwordHash;
+            admin.resetPasswordToken = undefined;
+            admin.resetPasswordExpires = undefined;
+            await admin.save();
         } catch (error) {
             throw error;
         }
@@ -112,7 +179,7 @@ class AdminService {
         const adminDto = new AdminDto(admin);
         const tokens = tokenService.generateTokens({ ...adminDto });
         await tokenService.saveToken(adminDto.id, tokens.refreshToken);
-        return { ...tokens, admin: adminDto };
+        return { ...tokens };
     }
 }
 

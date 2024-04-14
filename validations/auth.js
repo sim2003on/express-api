@@ -34,3 +34,15 @@ export const loginValidator = [
     ]),
     body('password', 'Пароль должен быть больше 6').isLength({ min: 6 }),
 ];
+
+export const forgotPasswordValidator = [
+    body('email', 'Неверный формат почты')
+        .isLength({ min: 5, max: 50 })
+        .withMessage('Длина почты не может быть меньше 5 или больше 50 символов')
+        .isEmail(),
+];
+
+export const resetPasswordValidator = [
+    body('password', 'Пароль должен быть больше 6').isLength({ min: 6 }),
+    body('token', 'Неверный формат токена').isLength({ min: 6 }),
+];

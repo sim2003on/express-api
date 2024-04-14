@@ -4,10 +4,10 @@ import tokenModel from '../models/tokenModel.js';
 class TokenService {
     generateTokens(payload) {
         const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-            expiresIn: '1h',
+            expiresIn: '1d',
         });
         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-            expiresIn: '7d',
+            expiresIn: '30d',
         });
         return {
             accessToken,

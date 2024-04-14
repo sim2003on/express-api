@@ -4,7 +4,6 @@ class PortfolioController {
     async createPortfolio(req, res, next) {
         try {
             const portfolioData = await portfolioService.createPortfolio(req);
-
             return res.status(201).json({ message: 'Портфолио успешно создан', portfolioData });
         } catch (error) {
             next(error);
@@ -37,7 +36,6 @@ class PortfolioController {
                 req.body?.data,
                 req,
             );
-
             return res.status(200).json({ message: 'Портфолио успешно обновлено', portfolioData });
         } catch (error) {
             next(error);

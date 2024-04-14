@@ -4,6 +4,7 @@ export class AdminDto {
     email;
     role;
     region;
+    isActivated;
 
     constructor(model) {
         this.id = model._id;
@@ -11,5 +12,6 @@ export class AdminDto {
         this.login = model.login;
         this.role = model.role;
         this.region = model.region;
+        this.isActivated = model.isActivated;
     }
 }
