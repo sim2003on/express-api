@@ -11,11 +11,12 @@ class AdminController {
             });
             return res.status(201).json({
                 success: true,
-                message: 'Регистрация прошла успешно',
+                message:
+                    'Регистрация прошла успешно, на вашу почту отправлена ссылка для подтверждения почты',
                 ...adminData,
             });
         } catch (error) {
-            logger.error({ err: error }, 'Ошибка при регистрации:');
+            console.error('Ошибка при регистрации:', error.message);
             next(error);
         }
     }
@@ -29,7 +30,7 @@ class AdminController {
             });
             return res.status(200).json(adminData);
         } catch (error) {
-            logger.error({ err: error }, 'Ошибка при авторизации:');
+            console.error('Ошибка при авторизации:', error.message);
             next(error);
         }
     }
@@ -41,7 +42,7 @@ class AdminController {
             res.clearCookie('refreshToken');
             return res.status(200).json({ message: 'Вы успешно вышли из системы.' });
         } catch (error) {
-            logger.error({ err: error }, 'Ошибка при выходе из системы:');
+            console.error(error);
             next(error);
         }
     }
@@ -51,7 +52,7 @@ class AdminController {
             const adminData = await adminService.getProfile(req);
             return res.status(200).json(adminData);
         } catch (error) {
-            logger.warn({ err: error }, 'Ошибка при получении профиля:');
+            logger.warn({ err: error.message }, 'Ошибка при получении профиля:');
             next(error);
         }
     }
@@ -61,7 +62,7 @@ class AdminController {
             await adminService.activateAccount(req.params.link);
             return res.status(200).json({ message: 'Аккаунт успешно активирован' });
         } catch (error) {
-            logger.warn({ err: error }, 'Ошибка при активации аккаунта:');
+            logger.warn({ err: error.message }, 'Ошибка при активации аккаунта:');
             next(error);
         }
     }
@@ -74,7 +75,10 @@ class AdminController {
                 .status(200)
                 .json({ message: 'Ссылка для сброса пароля отправлена на указанную почту' });
         } catch (error) {
-            logger.warn({ err: error }, 'Ошибка при отправке ссылки сброса пароля на почту:');
+            logger.warn(
+                { err: error.message },
+                'Ошибка при отправке ссылки сброса пароля на почту:',
+            );
             next(error);
         }
     }
@@ -86,7 +90,7 @@ class AdminController {
             await adminService.resetPassword(token, password);
             return res.status(200).json({ message: 'Пароль успешно изменен' });
         } catch (error) {
-            logger.error({ err: error }, 'Ошибка при сбросе пароля:');
+            console.error('Ошибка при сбросе пароля:', error.message);
             next(error);
         }
     }
@@ -101,7 +105,6 @@ class AdminController {
             });
             res.status(200).json(tokens);
         } catch (error) {
-            logger.error({ err: error }, 'Ошибка при обновлении токена:');
             next(error);
         }
     }
