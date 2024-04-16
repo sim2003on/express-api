@@ -10,7 +10,7 @@ import { deleteFilesIfError, deleteOldFile } from '../utils/deleteFiles.js';
 const uploadPath = 'uploads/projects/';
 
 class ProjectService {
-    async createProject(req) {
+    async create(req) {
         try {
             if (!req.files || !req.body.data) {
                 throw ApiError.BadRequestExeption('Нет файлов или данных проекта');
@@ -54,12 +54,11 @@ class ProjectService {
             if (req.files['planImage']) {
                 deleteFilesIfError(uploadPath, req.files['planImage'][0].filename);
             }
-            console.error(error);
             throw error;
         }
     }
 
-    async getAllProjects(region) {
+    async getAll(region) {
         try {
             const projects = await projectModel.find(region ? { region: region } : {});
 
@@ -69,12 +68,11 @@ class ProjectService {
             const projectDto = projects.map((project) => new ProjectDto(project));
             return projectDto;
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
 
-    async getOneProject(id) {
+    async getOne(id) {
         try {
             const project = await projectModel.findById(id);
             if (!project) {
@@ -83,12 +81,11 @@ class ProjectService {
             const projectDto = new ProjectDto(project);
             return projectDto;
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
 
-    async updateProject(id, data, req) {
+    async update(id, data, req) {
         try {
             const project = await projectModel.findById(id);
             if (!project) {
@@ -141,12 +138,11 @@ class ProjectService {
             if (req.files['planImage']) {
                 deleteFilesIfError(uploadPath, req.files['planImage'][0].filename);
             }
-            console.error(error);
             throw error;
         }
     }
 
-    async removeProject(id) {
+    async remove(id) {
         try {
             const project = await projectModel.findById(id);
             if (!project) {
@@ -157,7 +153,6 @@ class ProjectService {
             await fs.rm(projectFolderPath, { recursive: true, force: true });
             await projectModel.findByIdAndDelete(id);
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }

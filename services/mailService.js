@@ -30,7 +30,7 @@ class MailService {
 				<div>
 					<h1>Centre61 Support</h1>
 					<h3>Для активации перейдите по ссылке</h3>
-					<a href=${process.env.API_URL}/api/auth/activate/${link}">${process.env.API_URL}/api/auth/activate/${link}</a>
+					<a href="${process.env.API_URL}/api/auth/activate/${link}">${process.env.API_URL}/api/auth/activate/${link}</a>
 				</div>
 			`,
         });

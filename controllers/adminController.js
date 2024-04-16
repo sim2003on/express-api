@@ -16,7 +16,7 @@ class AdminController {
                 ...adminData,
             });
         } catch (error) {
-            console.error('Ошибка при регистрации:', error.message);
+            logger.error({ err: error.message }, 'Ошибка при регистрации:');
             next(error);
         }
     }
@@ -30,7 +30,7 @@ class AdminController {
             });
             return res.status(200).json(adminData);
         } catch (error) {
-            console.error('Ошибка при авторизации:', error.message);
+            logger.error({ err: error.message }, 'Ошибка при авторизации:');
             next(error);
         }
     }
@@ -42,7 +42,7 @@ class AdminController {
             res.clearCookie('refreshToken');
             return res.status(200).json({ message: 'Вы успешно вышли из системы.' });
         } catch (error) {
-            console.error(error);
+            logger.error({ err: error.message }, 'Ошибка при выходе из системы:');
             next(error);
         }
     }
@@ -52,7 +52,7 @@ class AdminController {
             const adminData = await adminService.getProfile(req);
             return res.status(200).json(adminData);
         } catch (error) {
-            logger.warn({ err: error.message }, 'Ошибка при получении профиля:');
+            logger.error({ err: error.message }, 'Ошибка при получении профиля:');
             next(error);
         }
     }
@@ -62,7 +62,7 @@ class AdminController {
             await adminService.activateAccount(req.params.link);
             return res.status(200).json({ message: 'Аккаунт успешно активирован' });
         } catch (error) {
-            logger.warn({ err: error.message }, 'Ошибка при активации аккаунта:');
+            logger.error({ err: error.message }, 'Ошибка при активации аккаунта:');
             next(error);
         }
     }
@@ -75,7 +75,7 @@ class AdminController {
                 .status(200)
                 .json({ message: 'Ссылка для сброса пароля отправлена на указанную почту' });
         } catch (error) {
-            logger.warn(
+            logger.error(
                 { err: error.message },
                 'Ошибка при отправке ссылки сброса пароля на почту:',
             );

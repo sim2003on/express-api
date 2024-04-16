@@ -38,7 +38,7 @@ export const uploadProject = multer({
     storage: storageProjects,
     fileFilter,
     limits: {
-        fileSize: 1024 * 1024 * 5,
+        fileSize: 1024 * 1024 * 20,
     },
 }).fields([
     {
@@ -55,7 +55,7 @@ export const uploadPortfolio = multer({
     storage: storagePortfolios,
     fileFilter,
     limits: {
-        fileSize: 1024 * 1024 * 5,
+        fileSize: 1024 * 1024 * 20,
     },
 }).fields([
     {

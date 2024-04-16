@@ -9,7 +9,7 @@ import { deleteFilesIfError, deleteOldFile } from '../utils/deleteFiles.js';
 const uploadPath = 'uploads/portfolios/';
 
 class PortfolioService {
-    async createPortfolio(req) {
+    async create(req) {
         try {
             if (!req.files || !req.body.data) {
                 throw ApiError.BadRequestExeption('Нет файлов или данных для портфолио');
@@ -42,12 +42,11 @@ class PortfolioService {
             if (image) {
                 deleteFilesIfError(uploadPath, image.filename);
             }
-            console.error(error);
             throw error;
         }
     }
 
-    async getAllPortfolios(query) {
+    async getAll(query) {
         try {
             let portfolios;
             if (query === undefined) {
@@ -60,12 +59,11 @@ class PortfolioService {
             }
             return portfolios.map((portfolio) => new PortfolioDto(portfolio));
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
 
-    async getOnePortfolio(id) {
+    async getOne(id) {
         try {
             const portfolio = await portfolioModel.findById(id);
             if (!portfolio) {
@@ -73,12 +71,11 @@ class PortfolioService {
             }
             return new PortfolioDto(portfolio);
         } catch (error) {
-            console.error(error);
             throw error;
         }
     }
 
-    async updatePortfolio(id, data, req) {
+    async update(id, data, req) {
         try {
             const portfolio = await portfolioModel.findById(id);
             if (!portfolio) {
@@ -108,20 +105,23 @@ class PortfolioService {
             if (image) {
                 deleteFilesIfError(uploadPath, image.filename);
             }
-            console.error(error);
             throw error;
         }
     }
 
-    async removePortfolio(id) {
-        const portfolio = await portfolioModel.findById(id);
-        if (!portfolio) {
-            throw ApiError.NotFoundExeption('Портфолио не найден');
+    async remove(id) {
+        try {
+            const portfolio = await portfolioModel.findById(id);
+            if (!portfolio) {
+                throw ApiError.NotFoundExeption('Портфолио не найден');
+            }
+            const portfolioFolderPath = path.join(uploadPath, portfolio.portfolioFolder);
+            await fs.access(portfolioFolderPath);
+            await fs.rm(portfolioFolderPath, { recursive: true, force: true });
+            await portfolioModel.findByIdAndDelete(id);
+        } catch (error) {
+            throw error;
         }
-        const portfolioFolderPath = path.join(uploadPath, portfolio.portfolioFolder);
-        await fs.access(portfolioFolderPath);
-        await fs.rm(portfolioFolderPath, { recursive: true, force: true });
-        await portfolioModel.findByIdAndDelete(id);
     }
 }
 
