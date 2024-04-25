@@ -11,6 +11,7 @@ class ReportService {
             if (!admin) {
                 throw ApiError.NotFoundExeption('Администратор не найден');
             }
+
             const newReport = new Report({
                 admin: req.adminId,
                 details: req.body,

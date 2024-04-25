@@ -11,7 +11,6 @@ class ProjectController {
             next(error);
         }
     }
-
     async getAllProjects(req, res, next) {
         try {
             const region = req.query?.region;
@@ -22,7 +21,6 @@ class ProjectController {
             next(error);
         }
     }
-
     async getOneProject(req, res, next) {
         try {
             const projectId = req.params.id;
@@ -33,7 +31,6 @@ class ProjectController {
             next(error);
         }
     }
-
     async updateProject(req, res, next) {
         try {
             const projectId = req.params.id;
@@ -45,7 +42,6 @@ class ProjectController {
             next(error);
         }
     }
-
     async removeProject(req, res, next) {
         try {
             const projectId = req.params.id;
